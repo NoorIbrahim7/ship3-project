@@ -5,7 +5,12 @@ Describe which project track you are choosing (adventure game, password manager,
 
 ## Project Proposal
 
-**Chosen Track:** _Replace this text with your chosen track (Choose‑Your‑Own‑Adventure, Password Manager, or Flashcard Quiz App)._ 
+**Chosen Track:** 
+
+**Project:** Password Manager  
+**Goal:** Implement user registration, adding passwords, and viewing saved passwords.  
+**Stretch Goals:** Implement login, search passwords, and generate random passwords.
+
 
 ### Description
 
