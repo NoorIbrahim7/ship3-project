@@ -1,59 +1,73 @@
-"""Simple password manager (stub).
+"""Simple password manager (basic implementation for Ship 3)."""
 
-This module provides placeholder functions for a command‑line password
-manager.  Eventually it will allow users to register with a master
-password, store encrypted passwords for various sites and retrieve them.
-For now, it contains stubs that raise `NotImplementedError` and prints
-a greeting when executed.
-"""
+import json
+import hashlib
+from pathlib import Path
+
+
+DATA_DIR = Path("data")
+USER_FILE = DATA_DIR / "user_data.json"
+PASSWORD_FILE = DATA_DIR / "passwords.json"
+
 
 def register_user(username: str, master_password: str) -> None:
-    """Register a new user with a master password.
+    """Register a new user by hashing and saving their master password."""
+    hashed_pw = hashlib.sha256(master_password.encode()).hexdigest()
 
-    You will hash and store the master password in a
-    JSON file for authentication.  This stub does nothing.
+    # Load existing users or create new dict
+    if USER_FILE.exists():
+        with open(USER_FILE, "r") as f:
+            users = json.load(f)
+    else:
+        users = {}
 
-    Args:
-        username: The username for the account.
-        master_password: The master password to use.
-    """
-    raise NotImplementedError("register_user is not yet implemented")
+    # Add / update user
+    users[username] = hashed_pw
+
+    # Save updated data
+    DATA_DIR.mkdir(exist_ok=True)
+    with open(USER_FILE, "w") as f:
+        json.dump(users, f, indent=2)
+
+    print(f"User '{username}' registered successfully.")
 
 
 def add_password(site: str, username: str, password: str) -> None:
-    """Store a password for a given site.
+    """Add a password entry and save it to passwords.json."""
+    entry = {"site": site, "username": username, "password": password}
 
-    You will encrypt the password and save it to a JSON file,
-    associating it with the site and username.  This stub does nothing.
+    # Load existing passwords or start fresh list
+    if PASSWORD_FILE.exists():
+        with open(PASSWORD_FILE, "r") as f:
+            entries = json.load(f)
+    else:
+        entries = []
 
-    Args:
-        site: The website or service name.
-        username: The account username for the site.
-        password: The password to store.
-    """
-    raise NotImplementedError("add_password is not yet implemented")
+    entries.append(entry)
+
+    # Save
+    DATA_DIR.mkdir(exist_ok=True)
+    with open(PASSWORD_FILE, "w") as f:
+        json.dump(entries, f, indent=2)
+
+    print(f"Password for '{site}' added.")
 
 
 def get_passwords() -> list[dict]:
-    """Retrieve all stored passwords.
-
-    This will read from an encrypted JSON file and return a list
-    of dictionaries containing site, username and password.  For now
-    it raises `NotImplementedError`.
-
-    Returns:
-        A list of stored passwords.
-    """
-    raise NotImplementedError("get_passwords is not yet implemented")
+    """Return all stored password entries."""
+    if not PASSWORD_FILE.exists():
+        return []
+    with open(PASSWORD_FILE, "r") as f:
+        return json.load(f)
 
 
 def main() -> None:
-    """Entry point for the password manager.
-
-    When run directly, this prints a greeting.  You will replace this
-    with registration, login and menu functionality in future ships.
-    """
+    """Temporary entry point for manual testing."""
     print("Welcome to the Password Manager!")
+    # Quick test block — comment out when done
+    # register_user("testuser", "mypass123")
+    # add_password("example.com", "testuser", "1234")
+    # print(get_passwords())
 
 
 if __name__ == "__main__":
